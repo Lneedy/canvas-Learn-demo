@@ -1,0 +1,62 @@
+		<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>accelerated</title>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script>
+		window.onload = function (){
+			var canvas = document.getElementById("canvas"),
+				context = canvas.getContext("2d"),
+				bounce = -0.8,
+				gravity = 0.98,
+				vy = 0;
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				
+				function Ball (){
+					this.x = 0;
+					this.y =0;
+					this.radius= 50;
+				}
+				Ball.prototype.draw = function (ctx){
+					ctx.save();
+					// ctx.rect(0 , 0 , canvas.width,canvas.height);
+					ctx.fillStyle = "rgba(0,0,0,.5)";
+					ctx.fillRect(0 , 0 , canvas.width,canvas.height);
+					ctx.translate(this.x ,this.y);
+					ctx.beginPath();
+					ctx.fillStyle = "#15a2fd";
+					ctx.arc(0,0,this.radius,0,2*Math.PI,false);
+					ctx.closePath();
+					ctx.fill();
+					ctx.restore();
+				};
+
+				var ball = new Ball();
+				ball.x = canvas.width/2;
+				ball.y = canvas.height/2 - 200;
+
+				function checkGround (ball){
+					if(ball.y +ball.radius >canvas.height){
+						ball.y = canvas.height -ball.radius;
+						vy *= bounce;
+					}
+				}
+
+				(function drawFrame(){
+					window.requestAnimationFrame(drawFrame,canvas);
+					context.clearRect(0,0,canvas.width,canvas.height);
+					vy += gravity;
+
+					ball.y += vy;
+					checkGround(ball);
+
+					ball.draw(context);
+				}())
+		};
+	</script>
+</body>
+</html>

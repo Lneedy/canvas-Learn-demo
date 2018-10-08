@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Matrix</title>
+</head>
+<body>
+	<canvas id="canvas" width="1920" height="1080"></canvas>
+	<script type="text/javascript">
+		window.onload = function (){
+			var canvas = document.getElementById('canvas'),
+				context = canvas.getContext('2d'),
+				w = canvas.width = window.innerWidth,
+				h = canvas.height = window.innerHeight;
+
+			var clearColor  = 'rgba(0,0,0,.1)',
+				wordColor = "#3f3",
+				words = "0123456789qwertyuiopasdfghjklzxcvbnm,./;'\[]QWERTYUIOP{}ASDFGHJHJKL:ZXCVBBNM<>?",
+				wordsArr = words.split(''),
+				font_size = 16,
+				clumns = w/font_size,
+				drops = [];
+
+			for(var i = 0 ; i <clumns;i++){
+				drops[i] = 1;
+			}
+
+			function draw (){
+				context.save();
+				context.fillStyle = wordColor;
+				context.font = font_size +"px arial";
+
+				for(var i = 0; i< drops.length;i++){
+					var text = wordsArr[Math.floor(Math.random()*wordsArr.length)];
+					context.fillText(text,i*font_size,drops[i]*font_size);
+					if(drops[i]*font_size >h && Math.random() > 0.98){
+						drops[i] = 0;
+					}
+					drops[i]++;
+				}
+				context.restore();
+			}
+
+			{
+				function drawFrame (){
+					window.requestAnimationFrame(drawFrame,canvas);
+					context.fillStyle = clearColor ;
+					context.fillRect(0,0,w,h);
+					draw();
+				}
+				drawFrame();
+			}
+		};
+
+	</script>
+</body>
+</html>

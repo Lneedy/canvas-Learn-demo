@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>followMouse</title>
+</head>
+<body>
+	<canvas id="canvas" width="500" height="500"></canvas>
+	<script type="text/javascript">
+		window.onload = function (){
+			function Arrow(){
+				this.x = 0;
+				this.y = 0;
+				this.rotation = 0;
+				this.color = "#ffff00";
+			}
+
+			Arrow.prototype.draw = function (context){
+				context.save();
+				context.translate(this.x,this.y);
+				context.rotate(this.rotation);
+				context.lineWidth = 5;
+				context.fillStyle = this.color;
+				context.beginPath();
+				context.moveTo(-50,25);
+				context.lineTo(0,-25);
+				context.lineTo(0,-50);
+				context.lineTo(50,0);
+				context.lineTo(0,50);
+				context.lineTo(0,25);
+				context.lineTo(-50,25);
+				context.closePath();
+				context.stroke();
+				context.fill();
+				context.restore();
+
+			}
+			var canvas = document.getElementById('canvas'),
+				context = canvas.getContext('2d'),
+				mouse = {},
+				arrow = new Arrow();
+
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				
+			var centerX = canvas.width/2,
+				centerY = canvas.height/2;
+
+			canvas.addEventListener('mousemove',function (ev){
+				var x = ev.pageX;
+				var y = ev.pageY;
+
+				x-= canvas.offsetLeft;
+				y-= canvas.offsetTop;
+
+				mouse.x = x;
+				mouse.y = y;
+				
+
+			});
+
+			arrow.x = centerX;
+			arrow.y = centerY;
+
+			{
+				function drawFrame(){
+					window.requestAnimationFrame(drawFrame,canvas);
+					context.clearRect(0,0,canvas.width,canvas.height);
+
+					var dx = mouse.x-arrow.x,
+						dy = mouse.y - arrow.y;
+
+					arrow.rotation = Math.atan2(dy,dx);
+					arrow.draw(context);
+				}
+				drawFrame();
+			}
+
+			
+		}
+	</script>
+</body>
+</html>

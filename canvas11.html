@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<title>ball</title>
+		</head>
+		<body>
+			<canvas id="canvas"  style="background:#000;">  your browser not support canvas</canvas>
+		
+			<script>  window.onload = function(){    
+				var canvas = document.getElementById("canvas"),    
+				context = canvas.getContext("2d");
+			 
+				canvas.width = window.innerWidth; 
+				canvas.height = window.innerHeight; 
+				  
+					function Ball (){
+					this.x = 0;
+					this.y =0;
+					this.radius= 50;
+				}
+				Ball.prototype.draw = function (ctx){
+					ctx.save();
+					ctx.fillStyle = "rgba(0,0,0,.01)";
+					ctx.fillRect(0 , 0 , canvas.width,canvas.height);
+					ctx.translate(this.x ,this.y);
+					ctx.beginPath();
+					ctx.fillStyle = "#15a2fd";
+					ctx.arc(0,0,this.radius,0,2*Math.PI,false);
+					ctx.closePath();
+					ctx.fill();
+					ctx.restore();
+				};
+				var balls = [],    
+				numBall = Math.floor(100*Math.random()),    
+				canWid = canvas.width,    
+				canHei = canvas.height;    
+				//定义10个小球    
+				console.log(numBall)
+				for(var i=0; i<numBall; i++){      
+					//大小      
+					var ball = new Ball();      
+					ball.id = "ball_" + i;   
+					//给每个小球一个id      
+					ball.radius = Math.random()*30+10;      
+					ball.x = Math.random()*canWid;      
+					ball.y = Math.random()*canHei;      
+					ball.vx = Math.random()*2 - 1;      
+					ball.vy = Math.random()*2 - 1;      
+					balls.push(ball); 
+					//push进数组    
+				}    
+				//定义draw函数    
+				function draw(ball, pos){          
+					//让小球加上它的速度值      
+					ball.x += ball.vx;      
+					ball.y += ball.vy;      
+					//判断是否超出边界，不论超出哪一边      
+					if(ball.x - ball.radius > canvas.width || ball.radius+ball.x <0 || ball.y - ball.radius > canvas.height || ball.y+ball.radius < 0){        
+						
+						//超出了重置速度与坐标    
+						ball.x = canvas.width/2;    
+						ball.y = canvas.height;    
+						ball.vx = Math.random()*(2) - 1;    
+						ball.vy = Math.random()*(-2) - 1;  
+
+						// balls[pos].x = Math.random()*canWid;      
+						// balls[pos].y = Math.random()*canHei; 
+						// balls[pos].vx = Math.random()-balls[pos].vx;         
+						// balls[pos].vy = Math.random()-balls[pos].vy;   
+						  
+						
+				}      
+			ball.draw(context);    
+		}    
+	//动画循环    
+	(function drawFrame(){      
+		window.requestAnimationFrame(drawFrame, canvas);      
+		context.clearRect(0, 0, canvas.width, canvas.height);      
+		//定义初始变量 i 为小球的数量, 并且会随着小球的移除减小      
+		var i = balls.length;      
+		while(i--){        
+			draw(balls[i], i);      
+		}    
+	}());  
+}
+</script>
+
+			
+		</body>
+		</html>		

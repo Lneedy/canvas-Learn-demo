@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>waterplants</title>
+	<style>
+		html,body{
+			margin:0;
+			padding:0;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" ></canvas>
+	<script type="text/javascript">
+		window.onload = function (){
+			function Aqu(color,num,amp){
+				this.startPoint = [];
+				this.endPointX = [];
+				this.endPointY = [];
+				this.amp = [];
+				this.beta = 0;
+				this.color = (color == undefined)?"#3b154e":color;
+				this.num = (num == undefined)?100:num;
+			}
+
+			Aqu.prototype.init = function (){
+				for(var i = 0;i<this.num;i++){
+					this.startPoint[i] = Math.random()*300 + i*10;
+					this.endPointX[i] = this.startPoint[i];
+					this.endPointY[i] = canvas.height/1.5 - Math.random() * 50;
+					this.amp[i] = Math.random() * 10 + 40;//振幅
+				}
+			}
+			Aqu.prototype.draw = function (ctx){
+
+				ctx.save();
+				ctx.lineWidth = 14;
+				ctx.lineCap = "round";
+				ctx.strokeStyle = this.color;
+				ctx.rect(0 , 0 , canvas.width,canvas.height);
+				ctx.fillStyle = "#79a070";
+				ctx.fill();
+				this.beta  += del*0.0012;
+				var l = Math.sin(this.beta);
+
+				for(var i = 0;i<this.num;i++){
+					ctx.beginPath();
+					ctx.moveTo(this.startPoint[i],canvas.height);
+					this.endPointX[i] = this.startPoint[i] + l*this.amp[i];
+					ctx.quadraticCurveTo(this.startPoint[i],canvas.height - 80,this.endPointX[i],this.endPointY[i]);
+					ctx.stroke();
+				}
+				
+				ctx.restore();
+			}
+
+			let canvas = document.getElementById('canvas'),
+				context = canvas.getContext('2d');
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			var oAqu = new Aqu();
+			oAqu.init();
+
+			var oldTime = new Date().getTime(),
+				del = null,
+				newTime = null;
+
+			(function drawFrame(){
+				window.requestAnimationFrame(drawFrame);
+				context.clearRect(0,0,canvas.width,canvas.height);
+				newTime = new Date().getTime();
+				del = new Date().getTime() - oldTime;
+				oldTime = newTime;
+				oAqu.draw(context);
+			}())
+			
+		};
+	</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+		<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>accelerated</title>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script>
+		window.onload = function (){
+			var canvas = document.getElementById("canvas"),
+				context = canvas.getContext("2d"),
+				vx = 0,
+				vr = 0,
+				angle = 0,
+				thrust = 0,
+				vy = 0;
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				
+				function SpaceShip (){
+					this.x = 0;
+					this.y =0;
+					this.width= 25;
+					this.height= 25;
+					this.showFlame = false;
+					this.rotation= 0;
+				}
+				SpaceShip.prototype.draw = function (ctx){
+					ctx.save();
+					// ctx.rect(0 , 0 , canvas.width,canvas.height);
+					ctx.fillStyle = "rgba(0,0,0,.5)";
+					ctx.fillRect(0 , 0 , canvas.width,canvas.height);
+					ctx.translate(this.x ,this.y);
+					ctx.beginPath();
+					ctx.rotate(this.rotation);
+					ctx.strokeStyle = "#fff";
+					ctx.moveTo(10,0);
+					ctx.lineTo(-10,10);
+					ctx.lineTo(-5,0);
+					ctx.lineTo(-10,-10);
+					ctx.lineTo(-10,-10);
+					ctx.lineTo(10,0);
+					ctx.closePath();
+					ctx.stroke();
+					if(this.showFlame === true){
+						ctx.save();
+						ctx.beginPath();
+						ctx.strokeStyle = "#f69";
+						context.moveTo(-7.5, -5);
+			            context.lineTo(-15, 0);
+			            context.lineTo(-7.5, 5);
+			            context.stroke();
+			            context.restore();
+					}
+					ctx.restore();
+				};
+
+				var spaceShip  = new SpaceShip ();
+				spaceShip .x = canvas.width/2;
+				spaceShip .y = canvas.height/2;
+
+				window.addEventListener('keydown',function (event){
+					switch(event.keyCode){
+						case 37: 
+							vr = -10;
+							// vx = 0;
+							// vy = 0;
+							break;
+						case 39: 
+							vr = 10;
+							// vx = 0;
+							// vy = 0;
+							break;
+						case 38: 
+							spaceShip.showFlame = true;
+							thrust = 0.1;
+							break;
+						case 40:
+		                    ax = 0;
+		                    ay = 0;
+		                    vx = 0;
+		                    vy = 0;
+		                    break;
+					}
+				},false);				
+
+				window.addEventListener('keyup',function (event){
+					vr = 0;
+					thrust = 0;
+					spaceShip.showFlame = false;
+				})
+
+				(function drawFrame(){
+					window.requestAnimationFrame(drawFrame,canvas);
+					context.clearRect(0,0,canvas.width,canvas.height);
+					
+					spaceShip.rotation += vr * Math.PI/180;
+
+					angle = spaceShip.rotation;
+					ax = Math.cos(angle)*thrust;
+					ay = Math.sin(angle)*thrust;
+
+					vx += ax;
+		            vy += ay;
+		          
+		            spaceShip.x += vx;
+		            spaceShip.y += vy;
+
+					spaceShip.draw(context);
+				}())
+		};
+	</script>
+</body>
+</html>
