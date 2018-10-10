@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>linear-vertical-motion</title>
+</head>
+<body>
+   <canvas id="canvas" width="500" height="500" style="background:#000;">
+       you browser not support canvas!
+   </canvas>
+   <script>
+       window.onload = function(){
+           function Ball(){
+           	  this.x = 0;
+           	  this.y = 0;
+           	  this.radius = 50;
+           	  this.color = '#15a2fd';
+              this.scaleX = 1;
+              this.scaleY = 1;
+            }
+            Ball.prototype.draw = function (ctx){
+            	ctx.save();
+            	ctx.beginPath();
+            	ctx.translate(this.x,this.y);
+              ctx.scale(this.scaleX,this.scaleY);
+            	ctx.fillStyle = this.color;
+            	ctx.arc(0,0,this.radius,0,Math.PI*2);
+            	ctx.closePath();
+            	ctx.fill();
+            	ctx.restore();
+            };
+           var canvas = document.getElementById('canvas'),
+           	   context = canvas.getContext('2d');
+           	   canvas.width = window.innerWidth;
+           	   canvas.height = window.innerHeight;
+           var angle = 0,
+               range = 0.5,
+               speed = 0.05,
+               xspeed = 1,
+               centerScale = 1;
+
+
+           var ball = new Ball();
+
+          ball.x = canvas.width/2;
+          ball.y = canvas.height/2;
+
+           (function drawFrame(){
+               window.requestAnimationFrame(drawFrame,canvas);
+               context.clearRect(0,0,canvas.width,canvas.height);
+               // ball.x += xspeed;
+				// if(ball.x >canvas.width+ball.radius){
+				// 	ball.x = -ball.radius;
+				// }
+				// ball.y = canvas.height/2;
+        ball.scaleX = ball.scaleY = centerScale + Math.sin(angle)*range;
+        angle +=  speed;
+               ball.draw(context);
+           })();
+       }
+
+
+    </script>
+
+</body>
+</html>

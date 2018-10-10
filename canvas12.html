@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>balldestped</title>
+</head>
+<body>
+    <canvas id="canvas" style="background: #000"></canvas>
+    <script>
+        window.onload = function (){
+            function Ball(){
+                this.x = 0;
+                this.y = 0;
+                this.radius = 0;
+                this.color = '#'+Math.floor(Math.random()*256+100).toString(10);
+            }
+            Ball.prototype.draw = function (ctx){
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.translate(this.x,this.y);
+                ctx.arc(0,0,this.radius,0,2*Math.PI,false);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext('2d');
+               
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+            var balls = [],
+                nums = 10000,
+                bounce = -1;
+                
+                                
+            for(var i = 0; i < nums; i++){
+                var ball = new Ball();
+                ball.radius = Math.random()*50 + 15 ;
+                var top = left = ball.radius,
+                right = canvas.width - ball.radius,
+                bottom = canvas.height - ball.radius;
+                ball.x = Math.random()*canvas.width;
+                ball.y = Math.random()*canvas.height;
+                ball.angle = Math.atan(ball.vy, ball.vx);
+                ball.speed = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+                ball.vx = Math.random()*2 - 1;
+                ball.vy = Math.random()*2 - 1;
+                
+                balls.push(ball);
+            } 
+
+            function draw(ball,index){
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+//                 if(speed > f){
+                    //   speed -= f;
+                    // }else{
+                    //   speed = 0;
+                    // }
+
+
+                // if(ball.y <top || ball.x>right || ball.y >bottom || ball.x <left){
+                //     ball.x = canvas.width/2;
+                //     ball.y = canvas.height;
+                //     ball.vx = Math.random()*2 - 1;
+                //     ball.vy = Math.random()*-2 - 1;
+
+                // }
+                if(ball.y <= top ){
+                    ball.y = top;
+                    ball.vy *= bounce;
+                }else if(ball.y >= bottom){
+                    ball.y = bottom;
+                    ball.vy *= bounce; 
+                }
+
+                if(ball.x <= left ){
+                    ball.x = left;
+                    ball.vx *= bounce ;
+                }else if(ball.x >= right){
+                    ball.x = right;
+                    ball.vx *= bounce ; 
+                }
+
+
+                ball.draw(context);
+            }
+            
+            (function drawFrame(){
+                window.requestAnimationFrame(drawFrame,canvas);
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                var i = balls.length;               
+                while(i--){
+                   draw(balls[i],i);
+                }
+                
+                
+            }());
+            
+        }
+    </script>
+</body>
+</html>

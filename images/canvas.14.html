@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ball bounce f</title>
+    <style>
+    	html,body{
+    		margin,padding:0;
+    		width:100%;
+    		height:100%;
+    		overflow:hidden;
+    	}
+    </style>
+</head>
+<body>
+    <canvas id="canvas" style="background: #000"></canvas>
+    <script>
+        window.onload = function (){
+
+            function Ball(){
+                this.x = 0;
+                this.y = 0;
+                this.radius = 0;
+                this.scale = 1;
+                this.firstScale = true;
+                this.color = '#'+Math.floor(Math.random()*256+100).toString(10);
+            }
+            Ball.prototype.draw = function (ctx,img){
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.translate(this.x,this.y);
+				ctx.scale(this.scale,this.scale);
+                ctx.arc(this.radius,this.radius,this.radius,0,2*Math.PI,false);
+                ctx.clip(); //剪切路径
+                ctx.drawImage(img, 0,0,this.radius*2, this.radius*2);
+
+
+                // ctx.closePath();
+                // ctx.fill();
+
+                ctx.restore();
+            }
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext('2d');
+
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+            var balls = [],
+                imgs = [],
+                nums = 100,
+                bounce = -1,
+                f = 0.001;
+
+            for(var i = 0;i<19;i++){
+                var img = new Image();
+                img.src = i+'.jpg';
+                imgs.push(img);
+            }
+            console.log(imgs)
+
+            for(var i = 0; i < nums; i++){
+                var ball = new Ball();
+                var text = ['谢','谢','观','看'];
+                ball.radius = Math.random()*100 + 15 ;
+                var top = left = ball.radius,
+                right = canvas.width - ball.radius,
+                bottom = canvas.height - ball.radius;
+                ball.x = Math.random()*canvas.width;
+                ball.y = Math.random()*canvas.height;
+               	ball.speed = 0,
+               	ball.angle = 0,
+                ball.vx = Math.random()*2 - 1;
+                ball.vy = Math.random()*2 - 1;
+
+                balls.push(ball);
+            }
+
+            function qiumo(num){
+                if(num%10>0&&num%10<10){
+
+                    return num%10;
+                }else{
+                    return num%10+1;
+                }
+            }
+
+            function draw(ball,index){
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+                ball.angle = Math.atan2(ball.vy, ball.vx);
+                ball.speed = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+
+                if(ball.speed > f+0.5){
+                    ball.speed -= f;
+                }else{
+                    ball.speed = 0;
+
+                    if( ball.scale>0){
+                    	if(ball.firstScale){
+                    		 ball.scale += 0.02;
+                    		if(ball.scale >= 1.5){
+
+                    			ball.firstScale = false;
+                    		}
+
+                    	}else{
+                    		ball.scale -=0.05;
+                    	}
+
+                    }else{
+                    	ball.scale = 0;
+                    	balls.splice(index,1);
+                    }
+                }
+
+                ball.vx = Math.cos(ball.angle) * ball.speed;
+                ball.vy = Math.sin(ball.angle) * ball.speed;
+                if(ball.y < top ){
+                    ball.y = top;
+                    ball.vy *= bounce;
+                }else if(ball.y >bottom){
+                    ball.y = bottom;
+                    ball.vy *= bounce;
+
+                }
+
+                if(ball.x < left ){
+                    ball.x = left;
+                    ball.vx *= bounce ;
+
+                }else if(ball.x > right){
+                    ball.x = right;
+                    ball.vx *= bounce;
+                }
+                if(ball.scale){
+
+
+                	ball.draw(context,imgs[qiumo(index)]);
+                }
+
+            }
+
+            (function drawFrame(){
+                window.requestAnimationFrame(drawFrame,canvas);
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                var i = balls.length;
+                while(i--){
+                   draw(balls[i],i);
+                }
+
+                if(!i){
+                	//谢谢观看
+                }
+            }());
+
+        }
+    </script>
+</body>
+</html>
