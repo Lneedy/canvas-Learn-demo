@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body style="overflow: hidden;width:100%;height:100%;">
+    <canvas id="canvas" style="background:#000;overflow:hidden;width:100%;height:100%;">
+       ....
+    </canvas>
+    <script>
+        window.onload = function (){
+            function Ball (){
+                this.x = 50;
+                this.y = 50;
+                this.radius = 50;
+                this.color = '#15a2fd';
+            }
+
+            //绘画小球
+            Ball.prototype.draw = function (ctx){
+                ctx.save();
+                ctx.translate(this.x,this.y);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(0,0,this.radius,0,Math.PI*2,false);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+           
+            // 全局对象
+            window.utils = {};
+            //mouse事件封装
+            utils.captureMouse = function (el){
+                var mouse = {
+                    x : 0,
+                    y : 0
+                };
+                el.addEventListener('mousemove',function (event){
+                    var x, y;
+                    if(event.pageX || event.pageY){
+                        x = event.pageX;
+                        y = event.pageY;
+                    }
+                    x -= el.offsetLeft;
+                    y -= el.offsetTop;
+                    mouse.x = x;
+                    mouse.y = y;
+                },false);
+                return mouse;
+            };
+
+            //圆形判断
+            utils.arcPoint = function (ball,x,y){
+                var distance =  Math.sqrt((ball.x-x)*(ball.x-x)+(ball.y-y)*(ball.y-y));
+                return distance<ball.radius;
+            }
+
+            //canvas 代码
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext('2d'),
+                mouse = utils.captureMouse(canvas),
+                ball = new Ball(),
+                w = 0,
+                h = 0;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ball.x = canvas.width/2;
+            ball.y = canvas.height/2;
+             //核心代码
+            canvas.addEventListener('mousedown',function (event){
+                console.log('mousedown');
+                
+                if(utils.arcPoint(ball,mouse.x,mouse.y)){
+                    w = mouse.x - ball.x;
+                    h = mouse.y - ball.y;
+                    canvas.addEventListener('mouseup',onMouseUp,false);
+                    canvas.addEventListener('mousemove',onMouseMove,false);
+                }
+                
+            },false);
+            
+            //核心代码
+            function onMouseUp(event){
+                console.log('mouseup');
+                canvas.removeEventListener('mouseup',onMouseUp,false);
+                canvas.removeEventListener('mousemove',onMouseMove,false);
+            }
+            function onMouseMove(event){
+                console.log('mousemove');
+                ball.x = mouse.x - w;
+                ball.y = mouse.y - h;
+            }
+            (function dramFrame(){
+                window.requestAnimationFrame(dramFrame,canvas);
+                context.clearRect(0,0,canvas.width,canvas.height);
+                ball.draw(context);
+            }())
+        };
+    </script>
+</body>
+</html>
