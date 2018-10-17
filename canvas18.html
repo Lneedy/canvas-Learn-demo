@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>slow-action</title>
+	<meta name="keywords" content="your keywords">
+	<meta name="description" content="your description">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<style>
+		html,body,canvas{
+			overflow: hidden;
+		    width: 100%;
+		    height: 100%;
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" style="background:#000;overflow:hidden;width:100%;height:100%;"></canvas>
+	<script>
+        window.onload = function (){
+            function Ball (){
+                this.x = 50;
+                this.y = 50;
+                this.radius = 50;
+                this.color = '#15a2fd';
+            }
+
+            //绘画小球
+            Ball.prototype.draw = function (ctx){
+                ctx.save();
+                ctx.translate(this.x,this.y);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(0,0,this.radius,0,Math.PI*2,false);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            //canvas 代码
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext('2d'),
+                ball = new Ball(),
+                easing = 0.1,//设置欢动参数,
+                targetX = canvas.width,
+                vx = 0;//加速度
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ball.y = canvas.height/2;
+            (function dramFrame(){
+                window.requestAnimationFrame(dramFrame,canvas);
+                context.clearRect(0,0,canvas.width,canvas.height);
+                //核心代码
+                vx = (targetX - ball.x)*easing;
+                ball.x += vx;
+                ball.draw(context);
+            }())
+        };
+    </script>
+</body>
+</html>
