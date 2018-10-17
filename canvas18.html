@@ -46,18 +46,27 @@
                 context = canvas.getContext('2d'),
                 ball = new Ball(),
                 easing = 0.1,//设置欢动参数,
-                targetX = canvas.width,
+                targetX = window.innerWidth/2,
                 vx = 0;//加速度
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+             
             ball.y = canvas.height/2;
             (function dramFrame(){
-                window.requestAnimationFrame(dramFrame,canvas);
+                var stopAni = window.requestAnimationFrame(dramFrame,canvas);
                 context.clearRect(0,0,canvas.width,canvas.height);
-                //核心代码
+
                 vx = (targetX - ball.x)*easing;
-                ball.x += vx;
-                ball.draw(context);
+                //核心代码
+                if(Math.abs(targetX - ball.x)<1){
+                    ball.x = targetX;
+                    ball.draw(context);
+                    window.cancelAnimationFrame(stopAni);
+                }else{
+                    ball.x += vx;
+
+                    ball.draw(context);
+                }
             }())
         };
     </script>
