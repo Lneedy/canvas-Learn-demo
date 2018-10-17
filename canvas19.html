@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>slow-action-mouse</title>
+	<meta name="keywords" content="your keywords">
+	<meta name="description" content="your description">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<style>
+		html,body,canvas{
+			overflow: hidden;
+		    width: 100%;
+		    height: 100%;
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" style="background:#000;overflow:hidden;width:100%;height:100%;"></canvas>
+	<script>
+        window.onload = function (){
+            function Ball (){
+                this.x = 50;
+                this.y = 50;
+                this.radius = 50;
+                this.color = '#15a2fd';
+                this.fontcolor = "#fff";
+            }
+
+            //绘画小球
+            Ball.prototype.draw = function (ctx){
+                ctx.save();
+                ctx.translate(this.x,this.y);
+                
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.arc(0,0,this.radius,0,Math.PI*2,false);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = this.fontcolor;
+                ctx.font="60px Georgia";
+                ctx.fillText('悟',-this.radius/2-5,this.radius/2-5);
+                ctx.closePath();
+               
+                ctx.restore();
+            }
+
+            // 全局对象
+            window.utils = {};
+            //mouse事件封装
+            utils.captureMouse = function (el){
+                var mouse = {
+                    x : 0,
+                    y : 0
+                };
+                el.addEventListener('mousemove',function (event){
+                    var x, y;
+                    if(event.pageX || event.pageY){
+                        x = event.pageX;
+                        y = event.pageY;
+                    }
+                    x -= el.offsetLeft;
+                    y -= el.offsetTop;
+                    mouse.x = x;
+                    mouse.y = y;
+                },false);
+                return mouse;
+            };
+
+
+            //canvas 代码
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext('2d'),
+                ball = new Ball(),
+                mouse = utils.captureMouse(canvas),
+                easing = 0.1,//设置欢动参数,
+                targetX = window.innerWidth/2,
+                targetY = window.innerHeight/2,
+                vx = 0;//加速度
+                vy = 0;//加速度
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+             
+            ball.y = canvas.height/2;
+            (function dramFrame(){
+                var stopAni = window.requestAnimationFrame(dramFrame,canvas);
+                context.clearRect(0,0,canvas.width,canvas.height);
+                targetX = mouse.x;
+                targetY = mouse.y;
+                vx = (targetX - ball.x)*easing;
+                vy = (targetY - ball.y)*easing;
+                //核心代码
+                if(Math.abs(targetX - ball.x)<1){
+                    ball.x = targetX;
+                    ball.draw(context);
+                    // window.cancelAnimationFrame(stopAni);
+                }else if(Math.abs(targetY - ball.Y)<1){
+                    ball.y = targetY;
+                    ball.draw(context);
+                    // window.cancelAnimationFrame(stopAni);
+                }else{
+                    ball.x += vx;
+                    ball.y += vy;
+                    ball.draw(context);
+                }
+            }())
+        };
+    </script>
+</body>
+</html>
