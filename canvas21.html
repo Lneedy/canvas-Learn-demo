@@ -43,12 +43,14 @@
                 ctx.fillStyle = this.color;
                 ctx.arc(0,0,this.radius,0,Math.PI*2,false);
                 ctx.closePath();
+
                 ctx.fill();
+                ctx.beginPath();
                 ctx.fillStyle = this.fontcolor;
                 ctx.font=this.fontsize+" Georgia";
                 ctx.fillText('悟',-this.radius/2-5,this.radius/2-5);
                 ctx.closePath();
-               
+                
                 ctx.restore();
             }
 
@@ -99,12 +101,20 @@
                 ball.vx *= f;
                 ball.vy += (targetY - ball.y)*spring;
                 ball.vy *= f;
+               context.save();
+               context.beginPath();
+               context.strokeStyle = "#fff";
+               context.moveTo(ball.x, ball.y);
+               context.lineTo(mouse.x, mouse.y);
+               context.stroke();
+               context.closePath();
+               context.restore();
                 //核心代码
                 if(Math.abs(targetX - ball.x)<1){
-                    ball.x = targetX;
+                    // ball.x = targetX;
                     ball.draw(context);
                 }else if(Math.abs(targetY - ball.y)<1){
-                    ball.y = targetY;
+                    // ball.y = targetY;
                     ball.draw(context);
                 }
                 else{
