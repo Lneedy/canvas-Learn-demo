@@ -31,7 +31,7 @@
         //实例化例子函数 文字粒子效果
         var word = new Shape(canvas.width/2,canvas.height/2);
         //路径需要放到同源网站目录下
-        word.getImg('http://www.lzxcs.com:9000/canvas23/images/2.png');
+        word.getImg('http://www.lzxcs.com:9000/canvas23/images/6.jpg');
     
         (function dramFrame(){
             window.requestAnimationFrame(dramFrame,canvas);
