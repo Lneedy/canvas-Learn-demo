@@ -1,15 +1,15 @@
       //canvas 代码
       var canvas = document.getElementById('canvas'),
         context = canvas.getContext('2d'),
-        gridX = 7,
-        gridY = 7,
-        type = "ball";
+        gridX = 3,//粒子间隔X方向
+        gridY = 3,//粒子间隔Y方向
+        type = "rect";
          //init参数
-        var message = 'Lneedy',
-            gravity = 0.1,
-            duration = 1,
-            speed = 0.2,
-            radius ='5%',
+        var message = 'Lneedy',//显示文字
+            gravity = 0.1,//下坠变量
+            duration = 1,//持续时间
+            speed = 0.1,//跃动速度
+            radius ='1%',//例子半径
             resolution ='',
             graVal = parseFloat(gravity),
             durVal = parseFloat(duration),
@@ -25,9 +25,13 @@
         
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        //实例化例子函数
-        var word = new Shape(canvas.width/2,canvas.height/2,message);
-        word.getValue();
+        //实例化例子函数 文字粒子效果
+        // var word = new Shape(canvas.width/2,canvas.height/2,message);
+        // word.getValue();
+        //实例化例子函数 文字粒子效果
+        var word = new Shape(canvas.width/2,canvas.height/2);
+        //路径需要放到同源网站目录下
+        word.getImg('http://www.lzxcs.com:9000/canvas23/images/2.png');
     
         (function dramFrame(){
             window.requestAnimationFrame(dramFrame,canvas);
