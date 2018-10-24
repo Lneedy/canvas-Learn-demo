@@ -35,10 +35,10 @@ Shape.prototype.getPar = function (){
     var idata = context.getImageData(0,0,canvas.width,canvas.height);
     console.log(idata.data)
     for(var i = 0;i<idata.data.length;i+=4){
-        
-        if(idata.data[i]===0&&idata.data[i+1]===0&&idata.data[i+2]===0&&idata.data[i+3]===255){
-            
-            idata.data[i]=0;idata.data[i+1] =0;idata.data[i+2]=0;idata.data[i+3]=255;
+        if(idata.data[i]<=86&&idata.data[i+1]<=86&&idata.data[i+2]<=86&&idata.data[i+3]>0){
+            idata.data[i]=0;
+            idata.data[i+1] =0;
+            idata.data[i+2]=0;
         }else{
             idata.data[i]=0;idata.data[i+1] =0;idata.data[i+2]=0;idata.data[i+3]=0;
         }
