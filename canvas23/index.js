@@ -11,6 +11,7 @@
             speed = 0.1,//跃动速度
             radius ='1%',//例子半径
             resolution ='',
+            //格式化为float
             graVal = parseFloat(gravity),
             durVal = parseFloat(duration),
             spdVal = parseFloat(speed),

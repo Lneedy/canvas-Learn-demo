@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>collision detection</title>
+	<meta name="keywords" content="your keywords">
+	<meta name="description" content="your description">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<style>
+		html,body,canvas{
+			overflow: hidden;
+		    width: 100%;
+		    height: 100%;
+		    position: fixed;
+		    top: 0;
+		    left: 0;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" style="background:#000;overflow:hidden;width:100%;height:100%;"></canvas>
+	<script>
+        window.onload = function (){
+            //绘制盒子
+            function Box (width, height, color) {
+                if (width === undefined) { width = 50; }
+                if (height === undefined) { height = 50; }
+                if (color === undefined) { color = "#ff0000"; }
+                this.x = 0;
+                this.x = 0;
+                this.y = 0;
+                this.width = width;
+                this.height = height;
+                this.vx = 0;
+                this.vy = 0;
+                this.rotation = 0;
+                this.scaleX = 1;
+                this.scaleY = 1;
+                this.color = utils.parseColor(color);
+                this.lineWidth = 1;
+            }
+
+                Box.prototype.draw = function (context) {
+                context.save();
+                context.translate(this.x, this.y);
+                context.rotate(this.rotation);
+                context.scale(this.scaleX, this.scaleY);
+                context.lineWidth = this.lineWidth;
+                context.fillStyle = this.color;
+                context.beginPath();
+                context.rect(0, 0, this.width, this.height);
+                context.closePath();
+                context.fill();
+                if (this.lineWidth > 0) {
+                    context.stroke();
+                }
+                context.restore();
+            };
+
+            // 全局对象
+            window.utils = {};
+            //mouse事件封装
+            utils.captureMouse = function (el){
+                var mouse = {
+                    x : 0,
+                    y : 0
+                };
+                el.addEventListener('mousemove',function (event){
+                    var x, y;
+                    if(event.pageX || event.pageY){
+                        x = event.pageX;
+                        y = event.pageY;
+                    }
+                    x -= el.offsetLeft;
+                    y -= el.offsetTop;
+                    mouse.x = x;
+                    mouse.y = y;
+                },false);
+                return mouse;
+            };
+            //碰撞检测
+            utils.intersects = function(rectA, rectB){
+                return !(rectA.x + rectA.width < rectB.x ||
+                        rectB.x + rectB.width < rectA.x ||
+                        rectA.y + rectA.height < rectB.y ||
+                        rectB.y + rectB.height < rectA.y);
+            }
+            //颜色格式化
+            utils.parseColor = function (color, toNumber) {
+                if (toNumber === true) {
+                    if (typeof color === 'number') {
+                    return (color | 0); //chop off decimal
+                    }
+                    if (typeof color === 'string' && color[0] === '#') {
+                    color = color.slice(1);
+                    }
+                    return window.parseInt(color, 16);
+                } else {
+                    if (typeof color === 'number') {
+                    color = '#' + ('00000' + (color | 0).toString(16)).substr(-6); //pad
+                    }
+                    return color;
+                }
+                };
+
+            //canvas 代码
+            var canvas = document.getElementById('canvas'),
+                context = canvas.getContext('2d'),
+                boxes = [],
+                flag = false;
+                activeBox = createBox(),
+                gravity = 0.02;
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            //创建一个新的box
+            function createBox(){
+                var color = Math.random()*(0xffffff);
+                var box = new Box(Math.random()*40+10, Math.random()*40+10, color);
+                box.x = Math.random()*canvas.width;
+                boxes.push(box);
+                return box;
+            }
+
+             //画boxes
+           function drawBox(box){
+           //判断box是否是activeBox,如果不是做碰撞检测,碰上了，创建新的box
+               if(activeBox !== box && utils.intersects(activeBox, box)){
+                    activeBox.vx =0;
+                    activeBox.vy =0;
+                   activeBox.y = box.y - activeBox.height;
+                   activeBox = createBox();
+               }
+               box.draw(context);
+           }
+           //监听事件keydown
+           window.addEventListener('keydown', function(event){
+               switch (event.keyCode){
+                   case 37:
+                       activeBox.x -= 5;
+                       break;
+                   case 39:
+                       activeBox.x += 5;
+                       break;
+                   case 40:
+                       gravity = 2;
+                       break;
+               }
+           }, false)
+           //监听事件keyup
+           window.addEventListener("keyup", function(event){
+                  gravity = 0.02;
+           }, false);
+
+
+            (function dramFrame(){
+                window.requestAnimationFrame(dramFrame,canvas);
+                context.clearRect(0,0,canvas.width,canvas.height);
+               //核心代码
+                
+               activeBox.vy += gravity;
+               activeBox.y += activeBox.vy;
+
+               //如果到达底部就创建一个新的box
+               if(activeBox.y + activeBox.height > canvas.height){
+                   activeBox.y = canvas.height - activeBox.height;
+                   activeBox = createBox();
+               }
+
+               //范围限制
+              if(activeBox.x < 0 ){
+                  activeBox.x = 0;
+              }
+              if( activeBox.x + activeBox.width > canvas.width){
+                   activeBox.x = canvas.width -activeBox.width;
+              }
+               //绘制
+               boxes.forEach(drawBox);                
+            }())
+        };
+    </script>
+</body>
+</html>
